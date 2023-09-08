@@ -1,0 +1,148 @@
+{
+  "Resources": {
+    "ApiGatewayRestApi": {
+      "Type": "AWS::ApiGateway::RestApi",
+      "Properties": {
+        "Name": "MyRestApi"
+      }
+    },
+    "ApiGatewayResource": {
+      "Type": "AWS::ApiGateway::Resource",
+      "Properties": {
+        "ParentId": {
+          "Fn::GetAtt": [
+            "ApiGatewayRestApi",
+            "RootResourceId"
+          ]
+        },
+        "PathPart": "myresource",
+        "RestApiId": {
+          "Ref": "ApiGatewayRestApi"
+        }
+      }
+    },
+    "ApiGatewayMethod": {
+      "Type": "AWS::ApiGateway::Method",
+      "Properties": {
+        "RestApiId": {
+          "Ref": "ApiGatewayRestApi"
+        },
+        "ResourceId": {
+          "Ref": "ApiGatewayResource"
+        },
+        "HttpMethod": "GET",
+        "AuthorizationType": "NONE",
+        "Integration": {
+          "Type": "MOCK",
+          "IntegrationResponses": [
+            {
+              "StatusCode": 200
+            }
+          ],
+          "PassthroughBehavior": "WHEN_NO_TEMPLATES",
+          "RequestTemplates": {
+            "application/json": "{\n}"
+          }
+        }
+      }
+    },
+    "ApiGatewayDeployment": {
+      "Type": "AWS::ApiGateway::Deployment",
+      "DependsOn": [
+        "ApiGatewayMethod"
+      ],
+      "Properties": {
+        "RestApiId": {
+          "Ref": "ApiGatewayRestApi"
+        },
+        "StageName": "prod"
+      }
+    },
+    "myDynamoDBTable" : {
+      "Type" : "AWS::DynamoDB::Table",
+      "Properties" : {
+        "AttributeDefinitions" : [
+          {
+            "AttributeName" : "username",
+            "AttributeType" : "S"
+          },
+          {
+            "AttributeName" : "password",
+            "AttributeType" : "S"
+          }
+        ],
+        "KeySchema" : [
+          {
+            "AttributeName" : "username",
+            "KeyType" : "HASH"
+          },
+          {
+            "AttributeName" : "password",
+            "KeyType" : "RANGE"
+          }
+        ],
+        "ProvisionedThroughput" : {
+          "ReadCapacityUnits" : "5",
+          "WriteCapacityUnits" : "5"
+        },
+        "TableName" : "cloudformationusers"
+      }
+    },
+    "MyInstance": {
+      "Type": "AWS::EC2::Instance",
+      "Properties": {
+        "ImageId": "ami-06e46074ae430fba6",
+        "InstanceType": "t2.micro",
+        "KeyName": "basha",
+        "SecurityGroupIds": [
+          {
+            "Ref": "MySecurityGroup"
+          }
+        ],
+        "UserData": {
+          "Fn::Base64": {
+            "Fn::Sub": "#!/bin/bash\necho \"Hello, World!\" >> /tmp/helloworld.txt"
+          }
+        }
+      }
+    },
+    "MySecurityGroup": {
+      "Type": "AWS::EC2::SecurityGroup",
+      "Properties": {
+        "GroupDescription": "Allow SSH access from anywhere",
+        "SecurityGroupIngress": [
+          {
+            "IpProtocol": "tcp",
+            "FromPort": 22,
+            "ToPort": 22,
+            "CidrIp": "0.0.0.0/0"
+          }
+        ]
+      }
+    },
+    "MyS3Bucket": {
+      "Type": "AWS::S3::Bucket",
+      "Properties": {
+        "BucketName": "clouformations3bucket",
+        "VersioningConfiguration": {
+          "Status": "Enabled"
+        }
+      }
+    },
+    "MySNSTopic": {
+      "Type": "AWS::SNS::Topic",
+      "Properties": {
+        "DisplayName": "My SNS Topic"
+      }
+    },
+    "MyKendraIndex": {
+      "Type": "AWS::Kendra::Index",
+      "Properties": {
+        "Name": "my-kendra-index",
+        "Edition": "DEVELOPER_EDITION",
+        "RoleArn": "arn:aws:iam::488119756134:role/LabRole",
+        "Description": "My Kendra index created with CloudFormation"
+      }
+    }
+  }
+}

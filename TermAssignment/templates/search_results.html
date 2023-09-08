@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+
+
+{% block content %}
+<head>
+    <!-- Include Bootstrap CSS and JS files -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='tablecss.css') }}">
+
+</head>
+<h2>Documents</h2>
+<table class="table table-striped">
+    <thead>
+    <tr>
+        <th>Title</th>
+        <th>Document Link</th>
+
+    </tr>
+    </thead>
+    <tbody>
+    {% for doc in doc_list %}
+    <tr>
+        <td>{{ doc.title }}</td>
+<!--        <td><a href="{{ url_for('download', filename=doc.link) }}">{{ doc.link }}</a></td>-->
+<!--        <td><a href="{{ url_for('download', filename=doc.link, username=current_user.username) }}">{{ doc.link }}</a></td>-->
+        <td>
+            <a href="{{ url_for('download', filename=doc.link, username=current_user.username) }}">
+                <button class="btn btn-primary">Send Email</button>
+            </a>
+        </td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

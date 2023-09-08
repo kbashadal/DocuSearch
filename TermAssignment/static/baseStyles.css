@@ -1,0 +1,29 @@
+.navbar-nav {
+  display: flex;
+  align-items: center;
+}
+
+.navbar-nav li {
+  padding: 0 10px;
+}
+
+.nav-link {
+  color: black !important;
+}
+
+.nav-link:hover {
+  color: #ddd !important;
+}
+
+.navbar-collapse {
+  justify-content: flex-end;
+}
+
+@media (max-width: 768px) {
+  .navbar-nav {
+    flex-direction: column;
+  }
+  .navbar-nav li {
+    padding: 5px 0;
+  }
+}

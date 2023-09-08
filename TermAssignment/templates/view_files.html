@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+  <h1>Files List</h1>
+  <table class="table table-striped">
+    <thead>
+    <tr>
+      <th>File Name</th>
+      <th>Action</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for file_name in file_names %}
+    <tr>
+      <td>{{ file_name }}</td>
+      <td>
+        <a href="{{ url_for('search', file_name=file_name) }}" class="btn btn-primary">Download</a>
+      </td>
+    </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

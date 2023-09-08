@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<head>
+  <title>{% block title %}{% endblock %}</title>
+  <!-- Include Bootstrap CSS and JS files -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<div class="container">
+  <h1>Welcome {{ current_user.username }}!</h1>
+  <div class="row">
+    <div class="col-md-6">
+      <h2>Upload File</h2>
+      <form method="POST" action="{{ url_for('upload_file') }}" enctype="multipart/form-data">
+        <div class="form-group">
+          <label for="file">Choose a file to upload:</label>
+          <input type="file" class="form-control-file" id="file" name="file">
+        </div>
+        <button type="submit" class="btn btn-primary">Upload to S3</button>
+      </form>
+    </div>
+    <div class="col-md-6">
+      <h2>Search</h2>
+      <form method="POST" action="{{ url_for('search') }}" enctype="multipart/form-data">
+        <div class="form-group">
+          <input type="text" name="query" placeholder="Enter search query">
+        </div>
+        <button type="submit" class="btn btn-primary">Search</button>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script>
+        $(document).ready(function () {
+            $('#logout-btn').click(function () {
+                $('#logout-form').submit();
+            });
+        });
+    </script>
+{% endblock %}
+
+{% block header %}
+{{ super() }}
+{% if current_user.is_authenticated %}
+<div class="navbar-nav ml-auto">
+  <button type="button" class="btn btn-outline-danger" id="logout-btn">Logout</button>
+</div>
+<form id="logout-form" action="{{ url_for('logout') }}" method="POST">
+  {{ csrf_token() }}
+</form>
+{% endif %}
+{% endblock %}
